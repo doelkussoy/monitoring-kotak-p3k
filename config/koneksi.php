@@ -2,7 +2,7 @@
 $host = "localhost";
 $user = "root";
 $pass = "";
-$db = "apar";
+$db = "saranaprasarana";
 
 date_default_timezone_set('Asia/Jakarta');
 

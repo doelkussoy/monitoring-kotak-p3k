@@ -326,11 +326,14 @@ $editData = $editBulan && isset($rows[$editBulan]) ? $rows[$editBulan] : null;
       <div class="d-flex align-items-center gap-2 text-white" style="cursor:pointer"
         onclick="window.location.href='dashboard.php'">
         <img src="assets/images/cba.png" alt="Logo CBA" style="height:40px; background:white; padding:4px; border-radius:8px;">
-        <span class="fw-bold fs-5" style="letter-spacing:1px">SISTEM SARANA PRASARANA</span>
+        <span class="fw-bold fs-5 d-none d-sm-inline" style="letter-spacing:1px">SISTEM SARANA PRASARANA</span>
       </div>
-      <div class="d-flex align-items-center gap-3">
-        <span class="text-white small"><i class="fa-solid fa-user me-1"></i><?= $_SESSION['username'] ?></span>
-        <a href="logout.php" class="btn btn-sm btn-outline-light rounded-pill px-3">Logout</a>
+      <div class="d-flex align-items-center gap-2 gap-md-3">
+        <span class="text-white small d-none d-md-inline"><i class="fa-solid fa-user me-1"></i><?= $_SESSION['username'] ?></span>
+        <a href="logout.php" class="btn btn-sm btn-outline-light rounded-pill px-2 px-md-3" title="Logout">
+          <i class="fa-solid fa-right-from-bracket d-inline d-sm-none"></i>
+          <span class="d-none d-sm-inline"><i class="fa-solid fa-right-from-bracket me-1"></i>Logout</span>
+        </a>
       </div>
     </div>
   </nav>

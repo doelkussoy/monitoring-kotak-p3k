@@ -61,7 +61,7 @@
             background: #fff;
             padding: 8px 16px;
             border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
         }
 
         .apar-icon {

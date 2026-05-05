@@ -92,21 +92,22 @@ if (!isset($_SESSION['username'])) {
     <div class="container-fluid d-flex justify-content-between align-items-center">
       <div class="d-flex align-items-center gap-2 text-white">
         <img src="assets/images/cba.png" alt="Logo CBA" style="height:40px; background:white; padding:4px; border-radius:8px;">
-        <span class="fw-bold fs-5" style="letter-spacing:1px">SISTEM SARANA PRASARANA</span>
+        <span class="fw-bold fs-5 d-none d-sm-inline" style="letter-spacing:1px">SISTEM SARANA PRASARANA</span>
       </div>
-      <div class="d-flex align-items-center gap-3">
-        <span class="text-white small"><i class="fa-solid fa-user me-1"></i><?= htmlspecialchars($_SESSION['username']) ?></span>
-        <a href="logout.php" class="btn btn-sm btn-outline-light rounded-pill px-3">
-          <i class="fa-solid fa-right-from-bracket me-1"></i>Logout
+      <div class="d-flex align-items-center gap-2 gap-md-3">
+        <span class="text-white small d-none d-md-inline"><i class="fa-solid fa-user me-1"></i><?= htmlspecialchars($_SESSION['username']) ?></span>
+        <a href="logout.php" class="btn btn-sm btn-outline-light rounded-pill px-2 px-md-3" title="Logout">
+          <i class="fa-solid fa-right-from-bracket d-inline d-sm-none"></i>
+          <span class="d-none d-sm-inline"><i class="fa-solid fa-right-from-bracket me-1"></i>Logout</span>
         </a>
       </div>
     </div>
   </nav>
 
-  <div class="container" style="margin-top:120px; padding-bottom:40px;">
-    <div class="text-center mb-5">
-      <h2 class="fw-bold text-dark mb-2">Selamat Datang di Dashboard</h2>
-      <p class="text-secondary">Pilih modul pengelolaan sarana prasarana yang ingin Anda akses</p>
+  <div class="container" style="margin-top:100px; padding-bottom:40px;">
+    <div class="text-center mb-4 mb-md-5 px-2">
+      <h3 class="fw-bold text-dark mb-2">Selamat Datang di Dashboard</h3>
+      <p class="text-secondary small d-none d-sm-block">Pilih modul pengelolaan sarana prasarana yang ingin Anda akses</p>
     </div>
 
     <div class="row g-4 justify-content-center mx-auto" style="max-width: 900px;">

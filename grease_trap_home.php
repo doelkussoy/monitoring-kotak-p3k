@@ -131,6 +131,11 @@ $listGreaseTrap = mysqli_query($conn, "SELECT * FROM grease_trap $where ORDER BY
       background: var(--blue);
       color: #fff;
       border: none;
+      white-space: nowrap;
+    }
+
+    .table tbody td {
+      white-space: nowrap;
     }
 
     .btn-kartu {
@@ -162,9 +167,15 @@ $listGreaseTrap = mysqli_query($conn, "SELECT * FROM grease_trap $where ORDER BY
     .modal-box {
       background: #fff;
       border-radius: 16px;
-      padding: 32px;
-      width: 90%;
+      padding: 24px;
+      width: 95%;
       max-width: 500px;
+    }
+
+    @media (min-width: 576px) {
+      .modal-box {
+        padding: 32px;
+      }
     }
 
     footer {
@@ -180,12 +191,13 @@ $listGreaseTrap = mysqli_query($conn, "SELECT * FROM grease_trap $where ORDER BY
     <div class="container-fluid d-flex justify-content-between align-items-center">
       <div class="d-flex align-items-center gap-2 text-white" style="cursor:pointer" onclick="window.location.href='dashboard.php'">
         <img src="assets/images/cba.png" alt="Logo CBA" style="height:40px; background:white; padding:4px; border-radius:8px;">
-        <span class="fw-bold fs-5" style="letter-spacing:1px">SISTEM SARANA PRASARANA</span>
+        <span class="fw-bold fs-5 d-none d-sm-inline" style="letter-spacing:1px">SISTEM SARANA PRASARANA</span>
       </div>
-      <div class="d-flex align-items-center gap-3">
-        <span class="text-white"><i class="fa-solid fa-user me-1"></i><?= $_SESSION['username'] ?></span>
-        <a href="logout.php" class="btn btn-sm btn-outline-light rounded-pill px-3">
-          <i class="fa-solid fa-right-from-bracket me-1"></i>Logout
+      <div class="d-flex align-items-center gap-2 gap-md-3">
+        <span class="text-white small d-none d-md-inline"><i class="fa-solid fa-user me-1"></i><?= $_SESSION['username'] ?></span>
+        <a href="logout.php" class="btn btn-sm btn-outline-light rounded-pill px-2 px-md-3" title="Logout">
+          <i class="fa-solid fa-right-from-bracket d-inline d-sm-none"></i>
+          <span class="d-none d-sm-inline"><i class="fa-solid fa-right-from-bracket me-1"></i>Logout</span>
         </a>
       </div>
     </div>
@@ -199,19 +211,19 @@ $listGreaseTrap = mysqli_query($conn, "SELECT * FROM grease_trap $where ORDER BY
           <small class="opacity-75">Kartu Riwayat Pengecekan</small>
         </div>
 
-        <div class="d-flex flex-wrap align-items-center gap-2">
+        <div class="d-flex flex-column flex-sm-row align-items-stretch align-items-sm-center gap-2 mt-3 mt-sm-0">
           <form method="GET" class="d-flex m-0">
-            <div class="input-group input-group-sm">
+            <div class="input-group input-group-sm w-100">
               <input type="text" name="keyword" class="form-control" placeholder="Cari Kode/Lokasi..."
                 value="<?= htmlspecialchars($keyword) ?>">
-              <button type="submit" class="btn btn-light text-primary"><i class="fa-solid fa-search"></i></button>
+              <button type="submit" class="btn btn-light text-primary border"><i class="fa-solid fa-search"></i></button>
               <?php if ($keyword != ''): ?>
-                <a href="grease_trap_home.php" class="btn btn-secondary"><i class="fa-solid fa-times"></i></a>
+                <a href="grease_trap_home.php" class="btn btn-secondary border"><i class="fa-solid fa-times"></i></a>
               <?php endif; ?>
             </div>
           </form>
 
-          <button class="btn btn-primary btn-sm px-3 rounded-pill fw-bold shadow-sm"
+          <button class="btn btn-primary btn-sm px-3 rounded-pill fw-bold shadow-sm text-nowrap"
             onclick="document.getElementById('modalTambah').classList.add('active')">
             <i class="fa-solid fa-plus me-1"></i>Tambah Grease Trap
           </button>
