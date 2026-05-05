@@ -58,7 +58,7 @@ Sebelum menjalankan aplikasi ini, pastikan Anda telah menginstal:
     $host = "localhost";
     $user = "root";
     $pass = "";
-    $db = "apar";
+    $db = "saranaprasarana";
     ```
 
 4.  **Jalankan Aplikasi:**
