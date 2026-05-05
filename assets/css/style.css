@@ -1,0 +1,31 @@
+@import url("https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600;700&display=swap");
+
+* {
+    font-family: "Rethink Sans", sans-serif;
+    scroll-behavior: smooth;
+}
+
+.container-fluid {
+    max-width: 1250px;
+}
+
+.btn-primary:hover {
+    transition: .3s ease-in-out;
+}
+
+.btn-secondary:hover {
+    transition: .3s ease-in-out;
+}
+
+.btn-success:hover {
+    transition: .3s ease-in-out;
+}
+
+.btn-danger {
+    color: #DC3545;
+}
+
+.btn-danger:hover {
+    color: #BF2231;
+    transition: .3s ease-in-out;
+}

@@ -1,0 +1,95 @@
+@media screen and (max-width: 768px) {
+    div.container-fluid {
+        padding: 0 24px;
+    }
+
+    .navbar-brand span {
+        display: none;
+    }
+
+    .navbar-brand .user {
+        display: none;
+    }
+
+    .modal {
+        padding: 24px;
+    }
+
+    .h2, .h3 {
+        text-align: center !important;
+    }
+
+    .fs-5 {
+        text-align: center;
+    }
+
+    .col button,
+    .col a.btn {
+        width: 100%;
+        margin-bottom: 12px;
+    }
+
+    .table-fit {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+    }
+    
+    .table th, .table td {
+        white-space: nowrap;
+        min-width: 120px;
+    }
+
+    /* Form Tambah Checklist */
+    .form-tambah .row {
+        margin-bottom: 16px;
+    }
+
+    .form-tambah input,
+    .form-tambah .id-label,
+    .form-tambah .toilet-label {
+        margin-bottom: 16px !important;
+    }
+
+    .form-tambah .mb-4 {
+        margin-bottom: 8px !important;
+    }
+
+    .form-tambah .button-ubah {
+        margin-top: 0px !important;
+    }
+
+    /* Form Ubah */
+    .form-ubah .input-id {
+        margin-top: 16px !important;
+    }
+
+    .form-ubah .row {
+        margin-bottom: 16px;
+    }
+
+    .form-ubah .mb-4 {
+        margin-bottom: 8px !important;
+    }
+
+    .form-ubah .button-ubah {
+        margin-top: 0px !important;
+    }
+
+    /* Form Buat Akun */
+    .form-akun .input-nama {
+        margin-top: 0px !important;
+        margin-bottom: 8px !important;
+    }
+
+    .form-akun .input-user,
+    .form-akun .input-status,
+    .form-akun .input-role {
+        margin-bottom: 8px !important;
+    }
+
+    .form-akun .row {
+        margin-bottom: 16px;
+    }
+  
+}
