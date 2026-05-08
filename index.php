@@ -1,195 +1,121 @@
+<?php
+include "db.php";
+session_start();
+
+if (isset($_POST['login'])) {
+    $username = mysqli_real_escape_string($conn, $_POST['username']);
+    $password = mysqli_real_escape_string($conn, $_POST['password']);
+
+    $result = mysqli_query($conn, "SELECT * FROM users WHERE username = '$username' AND pass = '$password'");
+
+    if (mysqli_num_rows($result) > 0) {
+        $userData = mysqli_fetch_assoc($result);
+        $_SESSION["username"] = $username;
+        $_SESSION["id"] = $userData["id"];
+        $_SESSION["role"] = $userData["role"];
+        $_SESSION["nama"] = $userData["nama"];
+        header('Location: dashboard.php');
+        exit;
+    } else {
+        $error = "Username atau Password salah!";
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="id">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Sistem Sarana Prasarana</title>
-    <link rel="icon" type="image/png" href="assets/images/cba.png">
-    <meta name="description" content="Sistem Perawatan APAR - Kartu Riwayat Sarana Prasarana">
+    <title>Login - MONITORING KOTAK P3K</title>
+    <link rel="shortcut icon" href="assets/images/cba-text.png" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/a404219d80.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        :root {
-            --blue: #2563eb;
-            --blue-dark: #1e3a8a;
-            --blue-light: #3b82f6;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
         body {
-            min-height: 100vh;
-            background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue) 50%, var(--blue-light) 100%);
-            font-family: 'Segoe UI', sans-serif;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .login-wrapper {
-            flex: 1;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 30px 16px;
         }
 
         .login-card {
-            background: rgba(255, 255, 255, .97);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, .35);
             width: 100%;
-            max-width: 420px;
-            overflow: hidden;
-        }
-
-        .login-top {
-            background: linear-gradient(135deg, var(--blue-dark), var(--blue-light));
-            padding: 32px 32px 24px;
-            text-align: center;
-            color: #fff;
+            max-width: 400px;
+            padding: 2.5rem;
+            animation: fadeIn 0.6s ease-out;
         }
 
         .login-logo {
-            height: 70px;
-            object-fit: contain;
-            margin-bottom: 16px;
-            background: #fff;
-            padding: 8px 16px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-        }
-
-        .apar-icon {
-            width: 72px;
-            height: 72px;
-            background: rgba(255, 255, 255, .2);
-            border-radius: 50%;
+            background: var(--primary);
+            width: 64px;
+            height: 64px;
+            border-radius: 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 14px;
-            font-size: 32px;
-            border: 2px solid rgba(255, 255, 255, .4);
-        }
-
-        .login-top h1 {
-            font-size: 20px;
-            font-weight: 800;
-            letter-spacing: .5px;
-            margin-bottom: 4px;
-        }
-
-        .login-top p {
-            font-size: 12px;
-            opacity: .85;
-        }
-
-        .login-form {
-            padding: 28px 32px 32px;
-        }
-
-        .form-label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #555;
-            margin-bottom: 5px;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+            color: white;
         }
 
         .form-control {
-            border-radius: 10px;
-            border: 1.5px solid #e0e0e0;
-            font-size: 14px;
-            padding: 10px 14px;
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            border: 1px solid #e2e8f0;
+            background: rgba(255, 255, 255, 0.5);
         }
 
         .form-control:focus {
-            border-color: var(--red-light);
-            box-shadow: 0 0 0 3px rgba(231, 76, 60, .15);
-        }
-
-        .input-group-text {
-            background: var(--blue);
-            border: 1.5px solid #e0e0e0;
-            border-right: none;
-            border-radius: 10px 0 0 10px;
-            color: #fff;
-        }
-
-        .input-group .form-control {
-            border-radius: 0 10px 10px 0;
-            border-left: none;
-        }
-
-        .btn-login {
-            background: linear-gradient(135deg, var(--blue-dark), var(--blue));
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            width: 100%;
-            padding: 12px;
-            font-size: 15px;
-            font-weight: 700;
-            letter-spacing: .5px;
-            margin-top: 8px;
-            transition: opacity .2s;
-        }
-
-        .btn-login:hover {
-            opacity: .88;
-            color: #fff;
-        }
-
-        footer {
-            background: rgba(0, 0, 0, .25);
-            color: rgba(255, 255, 255, .75);
-            text-align: center;
-            padding: 12px;
-            font-size: 12px;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+            border-color: var(--primary);
         }
     </style>
 </head>
 
 <body>
-    <div class="login-wrapper">
-        <div class="login-card">
-            <div class="login-top">
-                <img src="assets/images/cba.png" alt="Logo CBA" class="login-logo">
-                <h1>SISTEM SARANA PRASARANA</h1>
-                <p>Kartu Riwayat Pengecekan</p>
+    <div class="login-card glass-card">
+        <div class="text-center mb-4">
+            <img src="assets/images/cba-text.png" alt="Logo CBA" class="mb-3" style="height: 60px; width: auto;">
+            <h3 class="mb-1">Monitoring Kotak P3K</h3>
+            <p class="text-secondary small">Digital Monitoring System</p>
+        </div>
+
+        <?php if (isset($error)): ?>
+            <div class="alert alert-danger border-0 small py-2 mb-3" style="border-radius: 0.5rem;">
+                <i data-lucide="alert-circle" style="width:16px; height:16px; vertical-align:middle;" class="me-1"></i>
+                <?= $error ?>
             </div>
-            <div class="login-form">
-                <form action="login.php" method="POST">
-                    <div class="mb-3">
-                        <label class="form-label">Username</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fa-solid fa-user"></i></span>
-                            <input type="text" class="form-control" name="username" placeholder="Masukkan username"
-                                required autofocus>
-                        </div>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label">Password</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="fa-solid fa-lock"></i></span>
-                            <input type="password" class="form-control" name="password" placeholder="Masukkan password"
-                                required>
-                        </div>
-                    </div>
-                    <button type="submit" name="login" class="btn-login">
-                        <i class="fa-solid fa-right-to-bracket me-2"></i>MASUK
-                    </button>
-                </form>
+        <?php endif; ?>
+
+        <form action="" method="POST">
+            <div class="mb-3">
+                <label class="form-label small fw-semibold text-secondary">Username</label>
+                <input type="text" name="username" class="form-control" placeholder="Masukkan username" required
+                    autocomplete="off">
             </div>
+            <div class="mb-4">
+                <label class="form-label small fw-semibold text-secondary">Password</label>
+                <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+            </div>
+            <button type="submit" name="login" class="btn-premium w-100 justify-content-center">
+                Masuk ke Dashboard
+                <i data-lucide="arrow-right" style="width:18px; height:18px;"></i>
+            </button>
+        </form>
+
+        <div class="mt-4 text-center">
+            <p class="text-secondary tiny mb-0" style="font-size: 0.75rem;">
+                &copy; <?= date('Y') ?> Monitoring Kotak P3K | Team IT Pabrik
+            </p>
         </div>
     </div>
-    <footer>&copy; <?php echo date('Y'); ?> - Sistem Sarana Prasarana &nbsp;|&nbsp; Team IT Pabrik
-    </footer>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        lucide.createIcons();
+    </script>
 </body>
 
 </html>
