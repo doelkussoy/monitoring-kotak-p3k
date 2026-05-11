@@ -3,22 +3,42 @@ include "db.php";
 session_start();
 
 if (isset($_POST['login'])) {
-    $username = mysqli_real_escape_string($conn, $_POST['username']);
-    $password = mysqli_real_escape_string($conn, $_POST['password']);
+    $username = $_POST['username'];
+    $password = $_POST['password'];
 
-    $result = mysqli_query($conn, "SELECT * FROM users WHERE username = '$username' AND pass = '$password'");
+    // Secure Login with Prepared Statements
+    $stmt = $conn->prepare("SELECT id, username, pass, role, nama FROM users WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    if (mysqli_num_rows($result) > 0) {
-        $userData = mysqli_fetch_assoc($result);
-        $_SESSION["username"] = $username;
-        $_SESSION["id"] = $userData["id"];
-        $_SESSION["role"] = $userData["role"];
-        $_SESSION["nama"] = $userData["nama"];
-        header('Location: dashboard.php');
-        exit;
+    if ($result && $result->num_rows > 0) {
+        $userData = $result->fetch_assoc();
+        
+        // Use password_verify for production security
+        $is_password_correct = false;
+        if (password_verify($password, $userData['pass'])) {
+            $is_password_correct = true;
+        } elseif ($password === $userData['pass']) {
+            // Temporary support for legacy plain-text passwords
+            $is_password_correct = true;
+        }
+
+        if ($is_password_correct) {
+            session_regenerate_id(true); // Prevent Session Fixation
+            $_SESSION["username"] = $userData["username"];
+            $_SESSION["id"] = $userData["id"];
+            $_SESSION["role"] = $userData["role"];
+            $_SESSION["nama"] = $userData["nama"];
+            header('Location: dashboard.php');
+            exit;
+        } else {
+            $error = "Username atau Password salah!";
+        }
     } else {
         $error = "Username atau Password salah!";
     }
+    $stmt->close();
 }
 ?>
 <!DOCTYPE html>
@@ -71,6 +91,7 @@ if (isset($_POST['login'])) {
         .form-control:focus {
             box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
             border-color: var(--primary);
+            outline: none;
         }
     </style>
 </head>
