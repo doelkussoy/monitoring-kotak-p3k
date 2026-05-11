@@ -109,7 +109,7 @@ $next_month = date('Y-m-d', strtotime('+30 days'));
                 </a>
                 <a href="dashboard.php" class="d-flex align-items-center gap-3 text-decoration-none">
                     <img src="assets/images/cba-text.png" alt="Logo CBA" style="height: 35px; width: auto;">
-                    <div class="brand-text border-start ps-3">
+                    <div class="brand-text border-start ps-3 d-none d-sm-block">
                         <h1 class="h6 mb-0 fw-bold tracking-tight text-primary">
                             <?= strtoupper($lokasi['nama_lokasi']) ?>
                         </h1>
@@ -137,28 +137,6 @@ $next_month = date('Y-m-d', strtotime('+30 days'));
                             Pengaturan
                         </a>
                     <?php endif; ?>
-                </nav>
-
-                <!-- Mobile Bottom Nav -->
-                <nav class="mobile-bottom-nav desktop-hide">
-                    <a href="dashboard.php" class="mobile-nav-item">
-                        <i data-lucide="layout-dashboard"></i>
-                        <span>Dashboard</span>
-                    </a>
-                    <?php if ($_SESSION['role'] == 'Admin'): ?>
-                        <a href="laporan.php" class="mobile-nav-item">
-                            <i data-lucide="file-bar-chart"></i>
-                            <span>Laporan</span>
-                        </a>
-                        <a href="pengaturan.php" class="mobile-nav-item">
-                            <i data-lucide="settings"></i>
-                            <span>Atur</span>
-                        </a>
-                    <?php endif; ?>
-                    <a href="logout.php" class="mobile-nav-item text-danger">
-                        <i data-lucide="log-out"></i>
-                        <span>Keluar</span>
-                    </a>
                 </nav>
 
                 <div class="vr opacity-10 d-none d-md-block" style="height: 24px;"></div>
@@ -190,7 +168,29 @@ $next_month = date('Y-m-d', strtotime('+30 days'));
         </div>
     </nav>
 
-    <div class="container" style="margin-top: 100px; padding-bottom: 50px;">
+    <!-- Mobile Bottom Nav -->
+    <nav class="mobile-bottom-nav desktop-hide shadow-lg">
+        <a href="dashboard.php" class="mobile-nav-item">
+            <i data-lucide="layout-dashboard"></i>
+            <span>Dashboard</span>
+        </a>
+        <?php if ($_SESSION['role'] == 'Admin'): ?>
+            <a href="laporan.php" class="mobile-nav-item">
+                <i data-lucide="file-bar-chart"></i>
+                <span>Laporan</span>
+            </a>
+            <a href="pengaturan.php" class="mobile-nav-item">
+                <i data-lucide="settings"></i>
+                <span>Atur</span>
+            </a>
+        <?php endif; ?>
+        <a href="logout.php" class="mobile-nav-item text-danger">
+            <i data-lucide="log-out"></i>
+            <span>Keluar</span>
+        </a>
+    </nav>
+
+    <div class="container py-3" style="margin-top: 80px; padding-bottom: 100px;">
         <?php if (isset($success_msg)): ?>
             <div class="alert alert-success glass-card border-0 mb-4 fade-in">
                 <i data-lucide="check-circle" class="me-2" style="width:18px;"></i>
@@ -298,40 +298,6 @@ $next_month = date('Y-m-d', strtotime('+30 days'));
                         </td>
                         </tr>
 
-                        <!-- Modal Adjust Stock -->
-                        <div class="modal fade" id="adjustModal<?= $item['id'] ?>" tabindex="-1">
-                            <div class="modal-dialog modal-dialog-centered">
-                                <div class="modal-content glass-card border-0">
-                                    <div class="modal-header border-0 pb-0">
-                                        <h5 class="modal-title">Sesuaikan Stok</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                    </div>
-                                    <form action="" method="POST">
-                                        <div class="modal-body p-4">
-                                            <p class="text-secondary small mb-3">Update jumlah stok untuk
-                                                <strong><?= $item['nama_item'] ?></strong>.
-                                            </p>
-                                            <input type="hidden" name="item_id" value="<?= $item['id'] ?>">
-                                            <input type="hidden" name="item_name" value="<?= $item['nama_item'] ?>">
-                                            <div class="mb-3">
-                                                <label class="form-label small fw-bold">Jumlah Stok Baru</label>
-                                                <div class="input-group">
-                                                    <input type="number" name="stok" class="form-control"
-                                                        value="<?= $item['stok'] ?>" min="0" required>
-                                                    <span class="input-group-text bg-light"><?= $item['satuan'] ?></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer border-0 pt-0">
-                                            <button type="button" class="btn btn-light rounded-3"
-                                                data-bs-dismiss="modal">Batal</button>
-                                            <button type="submit" name="adjust_stock" class="btn-premium">Simpan
-                                                Perubahan</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
                         <?php
                         // Collect modals to render after the table
                         $modals[] = $item;

@@ -169,7 +169,7 @@ if (isset($_POST['delete_location']) && $_SESSION['role'] == 'Admin') {
         <div class="container-fluid px-4">
             <a href="dashboard.php" class="d-flex align-items-center gap-3 text-decoration-none">
                 <img src="assets/images/cba-text.png" alt="Logo CBA" style="height: 40px; width: auto;">
-                <div class="brand-text border-start ps-3">
+                <div class="brand-text border-start ps-3 d-none d-sm-block">
                     <h1 class="h6 mb-0 fw-bold tracking-tight text-primary">MONITORING KOTAK P3K</h1>
                     <p class="text-secondary tiny mb-0 fw-medium" style="font-size: 0.6rem; letter-spacing: 0.05em;">
                         DIGITAL MONITORING SYSTEM</p>
@@ -224,7 +224,7 @@ if (isset($_POST['delete_location']) && $_SESSION['role'] == 'Admin') {
     </nav>
 
     <!-- Mobile Bottom Nav -->
-    <nav class="mobile-bottom-nav desktop-hide">
+    <nav class="mobile-bottom-nav desktop-hide shadow-lg">
         <a href="dashboard.php" class="mobile-nav-item active">
             <i data-lucide="layout-dashboard"></i>
             <span>Dashboard</span>
@@ -245,7 +245,7 @@ if (isset($_POST['delete_location']) && $_SESSION['role'] == 'Admin') {
         </a>
     </nav>
 
-    <div class="container-fluid px-4" style="margin-top: 100px; padding-bottom: 50px;">
+    <div class="container-fluid px-4 py-3" style="margin-top: 80px; padding-bottom: 100px;">
         <?php if (isset($success_msg)): ?>
             <div class="alert alert-success glass-card border-0 mb-4 fade-in">
                 <i data-lucide="check-circle" class="me-2" style="width:18px;"></i>

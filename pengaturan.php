@@ -48,7 +48,7 @@ $users = mysqli_query($conn, "SELECT * FROM users ORDER BY role ASC, nama ASC");
         <div class="container-fluid px-4">
             <a href="dashboard.php" class="d-flex align-items-center gap-3 text-decoration-none">
                 <img src="assets/images/cba-text.png" alt="Logo CBA" style="height: 35px; width: auto;">
-                <div class="brand-text border-start ps-3">
+                <div class="brand-text border-start ps-3 d-none d-sm-block">
                     <h1 class="h6 mb-0 fw-bold tracking-tight text-primary">MONITORING KOTAK P3K</h1>
                     <p class="text-secondary tiny mb-0 fw-medium" style="font-size: 0.6rem; letter-spacing: 0.05em;">DIGITAL MONITORING SYSTEM</p>
                 </div>
@@ -99,7 +99,7 @@ $users = mysqli_query($conn, "SELECT * FROM users ORDER BY role ASC, nama ASC");
     </nav>
 
     <!-- Mobile Bottom Nav -->
-    <nav class="mobile-bottom-nav desktop-hide">
+    <nav class="mobile-bottom-nav desktop-hide shadow-lg">
         <a href="dashboard.php" class="mobile-nav-item">
             <i data-lucide="layout-dashboard"></i>
             <span>Dashboard</span>
@@ -120,7 +120,7 @@ $users = mysqli_query($conn, "SELECT * FROM users ORDER BY role ASC, nama ASC");
         </a>
     </nav>
 
-    <div class="container" style="margin-top: 120px; padding-bottom: 50px;">
+    <div class="container py-3" style="margin-top: 100px; padding-bottom: 100px;">
         <div class="row g-4">
             <div class="col-md-4">
                 <div class="glass-card p-4">
