@@ -158,6 +158,10 @@ footer {
     border-spacing: 0;
 }
 
+.table-premium thead tr {
+    background: #f8fafc;
+}
+
 .table-premium thead th {
     background: #f8fafc;
     color: var(--secondary);
@@ -249,7 +253,7 @@ footer {
 
 @media (min-width: 769px) {
     .mobile-hide {
-        display: block !important;
+        display: table-cell !important;
     }
     .desktop-hide {
         display: none !important;
@@ -289,7 +293,52 @@ footer {
 .sidebar-critical {
     max-height: calc(100vh - 250px);
     overflow-y: auto;
-    padding-right: 5px;
+}
+
+.critical-item {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #f1f5f9;
+    transition: all 0.2s;
+}
+
+.critical-item:hover {
+    background: #f8fafc;
+}
+
+.critical-item:last-child {
+    border-bottom: none;
+}
+
+.critical-item .item-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.critical-item .item-location {
+    font-size: 0.7rem;
+    color: var(--secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 2px;
+}
+
+.critical-item .item-qty {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--danger);
+    display: block;
+    line-height: 1;
+}
+
+.critical-item .badge-pill {
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.025em;
+    display: inline-block;
 }
 
 .nav-link-premium {
@@ -497,7 +546,7 @@ footer {
     /* Remove browser header/footer (Date, URL, Title) */
     @page {
         size: auto;
-        margin: 0;
+        margin: 20;
     }
 
     /* Force show hidden desktop elements if needed for reporting */

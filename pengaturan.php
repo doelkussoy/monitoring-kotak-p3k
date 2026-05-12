@@ -29,6 +29,24 @@ if (isset($_POST['add_user'])) {
     $stmt->close();
 }
 
+// Handle Update User
+if (isset($_POST['update_user'])) {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        die("CSRF token validation failed.");
+    }
+    $user_id = $_POST['target_user_id'];
+    $username = $_POST['username'];
+    $nama = $_POST['nama'];
+    $role = $_POST['role'];
+
+    $stmt = $conn->prepare("UPDATE users SET username = ?, nama = ?, role = ? WHERE id = ?");
+    $stmt->bind_param("sssi", $username, $nama, $role, $user_id);
+    if ($stmt->execute()) {
+        $success_msg = "Data user berhasil diperbarui!";
+    }
+    $stmt->close();
+}
+
 // Handle Delete User
 if (isset($_POST['delete_user_id'])) {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
@@ -114,7 +132,8 @@ while ($row = mysqli_fetch_assoc($user_query)) {
                 <img src="assets/images/cba-text.png" alt="Logo CBA" style="height: 35px; width: auto;">
                 <div class="brand-text border-start ps-3 d-none d-sm-block">
                     <h1 class="h6 mb-0 fw-bold tracking-tight text-primary">MONITORING KOTAK P3K</h1>
-                    <p class="text-secondary tiny mb-0 fw-medium" style="font-size: 0.6rem; letter-spacing: 0.05em;">DIGITAL MONITORING SYSTEM</p>
+                    <p class="text-secondary tiny mb-0 fw-medium" style="font-size: 0.6rem; letter-spacing: 0.05em;">
+                        DIGITAL MONITORING SYSTEM</p>
                 </div>
             </a>
 
@@ -135,12 +154,14 @@ while ($row = mysqli_fetch_assoc($user_query)) {
                         </a>
                     <?php endif; ?>
                 </nav>
-                
+
                 <div class="vr opacity-10 d-none d-md-block" style="height: 24px;"></div>
-                
+
                 <div class="dropdown">
-                    <div class="user-profile-trigger d-flex align-items-center gap-2" data-bs-toggle="dropdown" role="button">
-                        <div class="avatar-circle bg-accent-light text-accent rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                    <div class="user-profile-trigger d-flex align-items-center gap-2" data-bs-toggle="dropdown"
+                        role="button">
+                        <div class="avatar-circle bg-accent-light text-accent rounded-circle d-flex align-items-center justify-content-center"
+                            style="width: 36px; height: 36px;">
                             <i data-lucide="user" style="width:18px;"></i>
                         </div>
                         <div class="d-none d-lg-block">
@@ -151,16 +172,20 @@ while ($row = mysqli_fetch_assoc($user_query)) {
                     </div>
                     <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-3 rounded-4 p-2">
                         <li>
-                            <a class="dropdown-item rounded-3 small d-flex align-items-center gap-2 py-2" href="#" data-bs-toggle="modal" data-bs-target="#selfChangePassModal">
+                            <a class="dropdown-item rounded-3 small d-flex align-items-center gap-2 py-2" href="#"
+                                data-bs-toggle="modal" data-bs-target="#selfChangePassModal">
                                 <i data-lucide="key" style="width:16px;"></i>
                                 <span class="fw-medium">Ganti Password</span>
                             </a>
                         </li>
-                        <li><hr class="dropdown-divider"></li>
                         <li>
-                            <a class="dropdown-item rounded-3 small d-flex align-items-center gap-2 py-2" href="logout.php">
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <a class="dropdown-item rounded-3 small d-flex align-items-center gap-2 py-2"
+                                href="logout.php">
                                 <i data-lucide="log-out" style="width:16px;" class="text-danger"></i>
-                                <span class="fw-medium">Keluar Sistem</span>
+                                <span class="fw-medium">Keluar</span>
                             </a>
                         </li>
                     </ul>
@@ -217,7 +242,8 @@ while ($row = mysqli_fetch_assoc($user_query)) {
                                 <option value="Admin">Administrator</option>
                             </select>
                         </div>
-                        <button type="submit" name="add_user" class="btn-premium w-100 justify-content-center">Simpan User</button>
+                        <button type="submit" name="add_user" class="btn-premium w-100 justify-content-center">Simpan
+                            User</button>
                     </form>
                 </div>
             </div>
@@ -240,21 +266,30 @@ while ($row = mysqli_fetch_assoc($user_query)) {
                                             <span class="row-subtitle"><?= htmlspecialchars($u['username']) ?></span>
                                         </td>
                                         <td>
-                                            <span class="badge-status <?= $u['role'] == 'Admin' ? 'badge-critical' : 'badge-success' ?>">
-                                                <i data-lucide="<?= $u['role'] == 'Admin' ? 'shield-check' : 'user' ?>" style="width:12px;"></i>
+                                            <span
+                                                class="badge-status <?= $u['role'] == 'Admin' ? 'badge-critical' : 'badge-success' ?>">
+                                                <i data-lucide="<?= $u['role'] == 'Admin' ? 'shield-check' : 'user' ?>"
+                                                    style="width:12px;"></i>
                                                 <?= $u['role'] ?>
                                             </span>
                                         </td>
                                         <td class="text-end">
                                             <div class="d-flex justify-content-end gap-1">
-                                                <button type="button" 
+                                                <button type="button"
+                                                    class="btn btn-sm btn-outline-warning border-0 rounded-3 p-2"
+                                                    data-bs-toggle="modal" data-bs-target="#editUserModal<?= $u['id'] ?>">
+                                                    <i data-lucide="edit-3" style="width:18px;"></i>
+                                                </button>
+                                                <button type="button"
                                                     class="btn btn-sm btn-outline-primary border-0 rounded-3 p-2"
                                                     data-bs-toggle="modal" data-bs-target="#resetPassModal<?= $u['id'] ?>">
                                                     <i data-lucide="key" style="width:18px;"></i>
                                                 </button>
                                                 <?php if ($u['id'] != $_SESSION['id']): ?>
-                                                    <form id="deleteUserForm<?= $u['id'] ?>" action="" method="POST" class="mb-0">
-                                                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                                                    <form id="deleteUserForm<?= $u['id'] ?>" action="" method="POST"
+                                                        class="mb-0">
+                                                        <input type="hidden" name="csrf_token"
+                                                            value="<?= $_SESSION['csrf_token'] ?>">
                                                         <input type="hidden" name="delete_user_id" value="<?= $u['id'] ?>">
                                                         <button type="button"
                                                             onclick="confirmDeleteUser(<?= $u['id'] ?>, '<?= htmlspecialchars($u['nama']) ?>')"
@@ -288,14 +323,54 @@ while ($row = mysqli_fetch_assoc($user_query)) {
                         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                         <input type="hidden" name="target_user_id" value="<?= $u['id'] ?>">
                         <div class="modal-body text-start">
-                            <p class="small text-secondary mb-3">Reset password untuk <strong><?= htmlspecialchars($u['nama']) ?></strong></p>
+                            <p class="small text-secondary mb-3">Reset password untuk
+                                <strong><?= htmlspecialchars($u['nama']) ?></strong></p>
                             <div class="mb-3">
                                 <label class="form-label small fw-bold">Password Baru</label>
                                 <input type="password" name="new_pass" class="form-control" required>
                             </div>
                         </div>
                         <div class="modal-footer border-0 pt-0">
-                            <button type="submit" name="admin_change_pass" class="btn-premium w-100 justify-content-center">Update Password</button>
+                            <button type="submit" name="admin_change_pass"
+                                class="btn-premium w-100 justify-content-center">Update Password</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="editUserModal<?= $u['id'] ?>" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content glass-card border-0">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title">Edit User</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form action="" method="POST">
+                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                        <input type="hidden" name="target_user_id" value="<?= $u['id'] ?>">
+                        <div class="modal-body text-start">
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Username</label>
+                                <input type="text" name="username" class="form-control"
+                                    value="<?= htmlspecialchars($u['username']) ?>" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Nama Lengkap</label>
+                                <input type="text" name="nama" class="form-control"
+                                    value="<?= htmlspecialchars($u['nama']) ?>" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Role</label>
+                                <select name="role" class="form-control" required>
+                                    <option value="User" <?= $u['role'] == 'User' ? 'selected' : '' ?>>PIC / User</option>
+                                    <option value="Admin" <?= $u['role'] == 'Admin' ? 'selected' : '' ?>>Administrator</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-0 pt-0">
+                            <button type="submit" name="update_user" class="btn-premium w-100 justify-content-center">Update
+                                User</button>
                         </div>
                     </form>
                 </div>
@@ -324,7 +399,8 @@ while ($row = mysqli_fetch_assoc($user_query)) {
                         </div>
                     </div>
                     <div class="modal-footer border-0 pt-0">
-                        <button type="submit" name="self_change_pass" class="btn-premium w-100 justify-content-center">Simpan Perubahan</button>
+                        <button type="submit" name="self_change_pass"
+                            class="btn-premium w-100 justify-content-center">Simpan Perubahan</button>
                     </div>
                 </form>
             </div>
@@ -368,8 +444,10 @@ while ($row = mysqli_fetch_assoc($user_query)) {
     </script>
     <footer class="py-4 mt-5 border-top border-light text-center">
         <div class="container-fluid px-4">
-            <p class="text-secondary small mb-0">&copy; <?= date('Y') ?> <span class="fw-bold text-primary">PT CBA Chemical Industry</span> | Monitoring Kotak P3K - Team IT Pabrik</p>
+            <p class="text-secondary small mb-0">&copy; <?= date('Y') ?> <span class="fw-bold text-primary">PT CBA
+                    Chemical Industry</span> | Monitoring Kotak P3K - Team IT Pabrik</p>
         </div>
     </footer>
 </body>
+
 </html>

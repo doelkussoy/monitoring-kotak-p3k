@@ -57,32 +57,44 @@ $locations = mysqli_query($conn, "SELECT l.*, u.nama as pic_nama,
     LEFT JOIN users u ON l.pic = u.username 
     $where_clause");
 
-// 5. Handle Add Location
+// 5. Fetch all Users for PIC Selection
+$all_users_q = mysqli_query($conn, "SELECT username, nama FROM users WHERE role = 'User' ORDER BY nama ASC");
+$user_options = [];
+while ($u = mysqli_fetch_assoc($all_users_q)) {
+    $user_options[] = $u;
+}
+
+// 6. Handle Add Location
 if (isset($_POST['add_location']) && $role == 'Admin') {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         die("CSRF token validation failed.");
     }
     $nama_lokasi = $_POST['nama_lokasi'];
-    $pic_nama = $_POST['pic'];
-    $generated_username = strtolower(str_replace(' ', '', $pic_nama));
-    $stmt_check = $conn->prepare("SELECT id FROM users WHERE username = ?");
-    $stmt_check->bind_param("s", $generated_username);
-    $stmt_check->execute();
-    $check_user = $stmt_check->get_result();
-    if ($check_user->num_rows == 0) {
-        $hashed_pass = password_hash($generated_username, PASSWORD_DEFAULT);
-        $stmt_user = $conn->prepare("INSERT INTO users (username, pass, nama, role, status) VALUES (?, ?, ?, 'User', 'Aktif')");
-        $stmt_user->bind_param("sss", $generated_username, $hashed_pass, $pic_nama);
-        $stmt_user->execute();
-        $stmt_user->close();
-    }
-    $stmt_check->close();
+    $pic_username = $_POST['pic_username'];
+
     $stmt_loc = $conn->prepare("INSERT INTO p3k_lokasi (nama_lokasi, pic) VALUES (?, ?)");
-    $stmt_loc->bind_param("ss", $nama_lokasi, $generated_username);
+    $stmt_loc->bind_param("ss", $nama_lokasi, $pic_username);
     if ($stmt_loc->execute()) {
-        $success_msg = "Lokasi dan User PIC baru berhasil ditambahkan!";
+        $success_msg = "Lokasi baru berhasil ditambahkan!";
     }
     $stmt_loc->close();
+}
+
+// 7. Handle Edit Location
+if (isset($_POST['edit_location']) && $role == 'Admin') {
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        die("CSRF token validation failed.");
+    }
+    $lokasi_id = $_POST['lokasi_id'];
+    $nama_lokasi = $_POST['nama_lokasi'];
+    $pic_username = $_POST['pic_username'];
+
+    $stmt_edit = $conn->prepare("UPDATE p3k_lokasi SET nama_lokasi = ?, pic = ? WHERE id = ?");
+    $stmt_edit->bind_param("ssi", $nama_lokasi, $pic_username, $lokasi_id);
+    if ($stmt_edit->execute()) {
+        $success_msg = "Detail lokasi berhasil diperbarui!";
+    }
+    $stmt_edit->close();
 }
 
 // 6. Handle Delete Location
@@ -152,12 +164,52 @@ $locations = mysqli_query($conn, "SELECT l.*, u.nama as pic_nama,
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        .stat-card { padding: 1.5rem; position: relative; overflow: hidden; }
-        .stat-icon { position: absolute; right: -10px; bottom: -10px; width: 80px; height: 80px; opacity: 0.05; color: var(--primary); }
-        .location-card { transition: all 0.3s; border: 1px solid transparent; }
-        .location-card:hover { transform: translateY(-5px); border-color: #e2e8f0; box-shadow: var(--shadow-lg); }
-        .btn-delete-lokasi { background: #fff1f2; color: #e11d48; border: 1px solid #fecdd3; padding: 8px; border-radius: 10px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10; }
-        .btn-delete-lokasi:hover { background: #e11d48; color: white; transform: scale(1.1); }
+        .stat-card {
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-icon {
+            position: absolute;
+            right: -10px;
+            bottom: -10px;
+            width: 80px;
+            height: 80px;
+            opacity: 0.05;
+            color: var(--primary);
+        }
+
+        .location-card {
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .location-card:hover {
+            transform: translateY(-5px);
+            border-color: #e2e8f0;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-delete-lokasi {
+            background: #fff1f2;
+            color: #e11d48;
+            border: 1px solid #fecdd3;
+            padding: 8px;
+            border-radius: 10px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .btn-delete-lokasi:hover {
+            background: #e11d48;
+            color: white;
+            transform: scale(1.1);
+        }
     </style>
 </head>
 
@@ -168,7 +220,8 @@ $locations = mysqli_query($conn, "SELECT l.*, u.nama as pic_nama,
                 <img src="assets/images/cba-text.png" alt="Logo CBA" style="height: 40px; width: auto;">
                 <div class="brand-text border-start ps-3 d-none d-sm-block">
                     <h1 class="h6 mb-0 fw-bold tracking-tight text-primary">MONITORING KOTAK P3K</h1>
-                    <p class="text-secondary tiny mb-0 fw-medium" style="font-size: 0.6rem; letter-spacing: 0.05em;">DIGITAL MONITORING SYSTEM</p>
+                    <p class="text-secondary tiny mb-0 fw-medium" style="font-size: 0.6rem; letter-spacing: 0.05em;">
+                        DIGITAL MONITORING SYSTEM</p>
                 </div>
             </a>
 
@@ -191,8 +244,10 @@ $locations = mysqli_query($conn, "SELECT l.*, u.nama as pic_nama,
                 </nav>
                 <div class="vr opacity-10 d-none d-md-block" style="height: 24px;"></div>
                 <div class="dropdown">
-                    <div class="user-profile-trigger d-flex align-items-center gap-2" data-bs-toggle="dropdown" role="button">
-                        <div class="avatar-circle bg-accent-light text-accent rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                    <div class="user-profile-trigger d-flex align-items-center gap-2" data-bs-toggle="dropdown"
+                        role="button">
+                        <div class="avatar-circle bg-accent-light text-accent rounded-circle d-flex align-items-center justify-content-center"
+                            style="width: 36px; height: 36px;">
                             <i data-lucide="user" style="width:18px;"></i>
                         </div>
                         <div class="d-none d-lg-block">
@@ -203,16 +258,20 @@ $locations = mysqli_query($conn, "SELECT l.*, u.nama as pic_nama,
                     </div>
                     <ul class="dropdown-menu dropdown-menu-end border-0 shadow-lg mt-3 rounded-4 p-2">
                         <li>
-                            <a class="dropdown-item rounded-3 small d-flex align-items-center gap-2 py-2" href="#" data-bs-toggle="modal" data-bs-target="#selfChangePassModal">
+                            <a class="dropdown-item rounded-3 small d-flex align-items-center gap-2 py-2" href="#"
+                                data-bs-toggle="modal" data-bs-target="#selfChangePassModal">
                                 <i data-lucide="key" style="width:16px;"></i>
                                 <span class="fw-medium">Ganti Password</span>
                             </a>
                         </li>
-                        <li><hr class="dropdown-divider"></li>
                         <li>
-                            <a class="dropdown-item rounded-3 small d-flex align-items-center gap-2 py-2" href="logout.php">
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <a class="dropdown-item rounded-3 small d-flex align-items-center gap-2 py-2"
+                                href="logout.php">
                                 <i data-lucide="log-out" style="width:16px;" class="text-danger"></i>
-                                <span class="fw-medium">Keluar Sistem</span>
+                                <span class="fw-medium">Keluar</span>
                             </a>
                         </li>
                     </ul>
@@ -262,7 +321,9 @@ $locations = mysqli_query($conn, "SELECT l.*, u.nama as pic_nama,
                 <div class="d-flex justify-content-between align-items-end mb-4">
                     <div>
                         <h3 class="mb-1">Statistik Monitoring</h3>
-                        <p class="text-secondary small mb-0"><?= ($_SESSION['role'] == 'Admin') ? 'Overview kondisi persediaan P3K di seluruh area.' : 'Daftar lokasi P3K di bawah tanggung jawab Anda.' ?></p>
+                        <p class="text-secondary small mb-0">
+                            <?= ($_SESSION['role'] == 'Admin') ? 'Overview kondisi persediaan P3K di seluruh area.' : 'Daftar lokasi P3K di bawah tanggung jawab Anda.' ?>
+                        </p>
                     </div>
                     <?php if ($_SESSION['role'] == 'Admin'): ?>
                         <button class="btn-premium btn-sm" data-bs-toggle="modal" data-bs-target="#addLocationModal">
@@ -302,7 +363,8 @@ $locations = mysqli_query($conn, "SELECT l.*, u.nama as pic_nama,
                             <p class="text-secondary small fw-medium mb-1">Capacity Health</p>
                             <h2 class="mb-0"><?= $health_percentage ?>%</h2>
                             <div class="progress mt-3" style="height: 6px; background: #e2e8f0; border-radius: 10px;">
-                                <div class="progress-bar bg-primary" style="width: <?= $health_percentage ?>%; border-radius: 10px;"></div>
+                                <div class="progress-bar bg-primary"
+                                    style="width: <?= $health_percentage ?>%; border-radius: 10px;"></div>
                             </div>
                             <i data-lucide="activity" class="stat-icon"></i>
                         </div>
@@ -326,20 +388,35 @@ $locations = mysqli_query($conn, "SELECT l.*, u.nama as pic_nama,
                                                 <span class="badge-status badge-success">OK</span>
                                             <?php endif; ?>
                                             <?php if ($_SESSION['role'] == 'Admin'): ?>
-                                                <form id="deleteForm<?= $loc['id'] ?>" action="" method="POST" class="mb-0">
-                                                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-                                                    <input type="hidden" name="lokasi_id" value="<?= $loc['id'] ?>">
-                                                    <input type="hidden" name="delete_location" value="1">
-                                                    <button type="button" onclick="event.preventDefault(); event.stopPropagation(); confirmDelete(<?= $loc['id'] ?>, '<?= htmlspecialchars($loc['nama_lokasi']) ?>')" class="btn-delete-lokasi">
-                                                        <i data-lucide="trash-2" style="width:14px;"></i>
+                                                <div class="d-flex gap-1">
+                                                    <button type="button"
+                                                        onclick="event.preventDefault(); event.stopPropagation();"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#editLocationModal<?= $loc['id'] ?>"
+                                                        class="btn btn-sm btn-outline-warning border-0 rounded-3 p-2">
+                                                        <i data-lucide="edit-3" style="width:14px;"></i>
                                                     </button>
-                                                </form>
+                                                    <form id="deleteForm<?= $loc['id'] ?>" action="" method="POST" class="mb-0">
+                                                        <input type="hidden" name="csrf_token"
+                                                            value="<?= $_SESSION['csrf_token'] ?>">
+                                                        <input type="hidden" name="lokasi_id" value="<?= $loc['id'] ?>">
+                                                        <input type="hidden" name="delete_location" value="1">
+                                                        <button type="button"
+                                                            onclick="event.preventDefault(); event.stopPropagation(); confirmDelete(<?= $loc['id'] ?>, '<?= htmlspecialchars($loc['nama_lokasi']) ?>')"
+                                                            class="btn-delete-lokasi">
+                                                            <i data-lucide="trash-2" style="width:14px;"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
                                             <?php endif; ?>
                                         </div>
                                     </div>
                                     <h5 class="mb-1 text-dark"><?= htmlspecialchars($loc['nama_lokasi']) ?></h5>
-                                    <p class="text-secondary small mb-1">PIC: <span class="fw-semibold"><?= htmlspecialchars($loc['pic_nama'] ?? $loc['pic']) ?></span></p>
-                                    <p class="text-secondary tiny mb-3">Update terakhir: <?= date('d M Y', strtotime($loc['last_update'])) ?></p>
+                                    <p class="text-secondary small mb-1">PIC: <span
+                                            class="fw-semibold"><?= htmlspecialchars($loc['pic_nama'] ?? $loc['pic']) ?></span>
+                                    </p>
+                                    <p class="text-secondary tiny mb-3">Update terakhir:
+                                        <?= date('d M Y', strtotime($loc['last_update'])) ?></p>
                                     <div class="d-flex align-items-center gap-2 text-primary small fw-semibold">
                                         Lihat Detail
                                         <i data-lucide="chevron-right" style="width:14px;"></i>
@@ -366,17 +443,26 @@ $locations = mysqli_query($conn, "SELECT l.*, u.nama as pic_nama,
                                 $is_low_stock = ($item['stok'] <= $item['min_stok']);
                                 ?>
                                 <div class="critical-item">
-                                    <div class="d-flex justify-content-between align-items-start mb-1">
-                                        <span class="small fw-bold"><?= htmlspecialchars($item['nama_item']) ?></span>
-                                        <span class="text-danger small fw-bold"><?= $item['stok'] ?> <?= htmlspecialchars($item['satuan']) ?></span>
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="me-2">
+                                            <h6 class="item-name mb-0"><?= htmlspecialchars($item['nama_item']) ?></h6>
+                                            <div class="item-location">
+                                                <i data-lucide="map-pin" style="width:10px; height:10px;"></i>
+                                                <?= htmlspecialchars($item['nama_lokasi']) ?>
+                                            </div>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="item-qty"><?= $item['stok'] ?></span>
+                                            <span class="tiny text-secondary"
+                                                style="font-size: 0.65rem;"><?= htmlspecialchars($item['satuan']) ?></span>
+                                        </div>
                                     </div>
-                                    <p class="text-secondary tiny mb-1" style="font-size: 0.7rem;"><?= htmlspecialchars($item['nama_lokasi']) ?></p>
-                                    <div class="d-flex gap-1">
+                                    <div class="d-flex gap-1 mt-1">
                                         <?php if ($is_low_stock): ?>
-                                            <span class="tiny px-2 py-0 bg-danger text-white rounded" style="font-size: 0.6rem;">STOK RENDAH</span>
+                                            <span class="badge-pill bg-danger text-white">STOK RENDAH</span>
                                         <?php endif; ?>
                                         <?php if ($is_expired): ?>
-                                            <span class="tiny px-2 py-0 bg-warning text-dark rounded" style="font-size: 0.6rem;">KADALUARSA</span>
+                                            <span class="badge-pill bg-warning text-dark">KADALUARSA</span>
                                         <?php endif; ?>
                                     </div>
                                 </div>
@@ -388,7 +474,8 @@ $locations = mysqli_query($conn, "SELECT l.*, u.nama as pic_nama,
                         <?php endif; ?>
                     </div>
                     <div class="p-3 bg-light text-center rounded-bottom">
-                        <a href="laporan.php" class="small text-primary text-decoration-none fw-semibold">Lihat Semua</a>
+                        <a href="laporan.php" class="small text-primary text-decoration-none fw-semibold">Lihat
+                            Semua</a>
                     </div>
                 </div>
 
@@ -409,7 +496,8 @@ $locations = mysqli_query($conn, "SELECT l.*, u.nama as pic_nama,
                                     <div>
                                         <p class="small mb-1 fw-medium"><?= htmlspecialchars($act['message']) ?></p>
                                         <p class="text-secondary tiny mb-0" style="font-size: 0.7rem;">
-                                            <?= htmlspecialchars($act['nama_lokasi']) ?> • <?= date('H:i', strtotime($act['created_at'])) ?>
+                                            <?= htmlspecialchars($act['nama_lokasi']) ?> •
+                                            <?= date('H:i', strtotime($act['created_at'])) ?>
                                         </p>
                                     </div>
                                 </div>
@@ -434,21 +522,70 @@ $locations = mysqli_query($conn, "SELECT l.*, u.nama as pic_nama,
                     <div class="modal-body p-4">
                         <div class="mb-3">
                             <label class="form-label small fw-bold">Nama Lokasi</label>
-                            <input type="text" name="nama_lokasi" class="form-control" placeholder="Contoh: Gedung Produksi B" required>
+                            <input type="text" name="nama_lokasi" class="form-control"
+                                placeholder="Contoh: Gedung Produksi B" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label small fw-bold">Penanggung Jawab (PIC)</label>
-                            <input type="text" name="pic" class="form-control" placeholder="Nama lengkap PIC" required>
+                            <select name="pic_username" class="form-control" required>
+                                <option value="">-- Pilih PIC --</option>
+                                <?php foreach ($user_options as $uo): ?>
+                                    <option value="<?= $uo['username'] ?>"><?= htmlspecialchars($uo['nama']) ?>
+                                        (<?= $uo['username'] ?>)</option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                     </div>
                     <div class="modal-footer border-0 pt-0">
-                        <button type="button" class="btn btn-light rounded-3" data-bs-toggle="modal">Batal</button>
+                        <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal">Batal</button>
                         <button type="submit" name="add_location" class="btn-premium">Simpan Lokasi</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
+
+    <?php
+    // Reset locations pointer to generate edit modals
+    mysqli_data_seek($locations, 0);
+    while ($loc = mysqli_fetch_assoc($locations)): ?>
+        <div class="modal fade" id="editLocationModal<?= $loc['id'] ?>" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content glass-card border-0">
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title">Edit Lokasi</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <form action="" method="POST">
+                        <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                        <input type="hidden" name="lokasi_id" value="<?= $loc['id'] ?>">
+                        <div class="modal-body p-4">
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Nama Lokasi</label>
+                                <input type="text" name="nama_lokasi" class="form-control"
+                                    value="<?= htmlspecialchars($loc['nama_lokasi']) ?>" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Penanggung Jawab (PIC)</label>
+                                <select name="pic_username" class="form-control" required>
+                                    <option value="">-- Pilih PIC --</option>
+                                    <?php foreach ($user_options as $uo): ?>
+                                        <option value="<?= $uo['username'] ?>" <?= $uo['username'] == $loc['pic'] ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($uo['nama']) ?> (<?= $uo['username'] ?>)
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-0 pt-0">
+                            <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" name="edit_location" class="btn-premium">Simpan Perubahan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    <?php endwhile; ?>
 
     <!-- Modal Self Change Password -->
     <div class="modal fade" id="selfChangePassModal" tabindex="-1">
@@ -471,7 +608,8 @@ $locations = mysqli_query($conn, "SELECT l.*, u.nama as pic_nama,
                         </div>
                     </div>
                     <div class="modal-footer border-0 pt-0">
-                        <button type="submit" name="self_change_pass" class="btn-premium w-100 justify-content-center">Simpan Perubahan</button>
+                        <button type="submit" name="self_change_pass"
+                            class="btn-premium w-100 justify-content-center">Simpan Perubahan</button>
                     </div>
                 </form>
             </div>
@@ -502,8 +640,10 @@ $locations = mysqli_query($conn, "SELECT l.*, u.nama as pic_nama,
     </script>
     <footer class="py-4 mt-5 border-top border-light">
         <div class="container-fluid px-4 text-center">
-            <p class="text-secondary small mb-0">&copy; <?= date('Y') ?> <span class="fw-bold text-primary">PT CBA Chemical Industry</span> | Monitoring Kotak P3K - Team IT Pabrik</p>
+            <p class="text-secondary small mb-0">&copy; <?= date('Y') ?> <span class="fw-bold text-primary">PT CBA
+                    Chemical Industry</span> | Monitoring Kotak P3K - Team IT Pabrik</p>
         </div>
     </footer>
 </body>
+
 </html>
