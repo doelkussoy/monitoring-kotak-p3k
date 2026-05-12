@@ -335,7 +335,8 @@ while ($row = mysqli_fetch_assoc($user_query)) {
                         <input type="hidden" name="target_user_id" value="<?= $u['id'] ?>">
                         <div class="modal-body text-start">
                             <p class="small text-secondary mb-3">Reset password untuk
-                                <strong><?= htmlspecialchars($u['nama']) ?></strong></p>
+                                <strong><?= htmlspecialchars($u['nama']) ?></strong>
+                            </p>
                             <div class="mb-3">
                                 <label class="form-label small fw-bold">Password Baru</label>
                                 <input type="password" name="new_pass" class="form-control" required>
@@ -455,8 +456,8 @@ while ($row = mysqli_fetch_assoc($user_query)) {
     </script>
     <footer class="py-4 mt-5 border-top border-light text-center">
         <div class="container-fluid px-4">
-            <p class="text-secondary small mb-0">&copy; <?= date('Y') ?> <span class="fw-bold text-primary">PT CBA
-                    Chemical Industry</span> | Monitoring Kotak P3K - Team IT Pabrik</p>
+            <p class="text-secondary small mb-0">&copy; <?= date('Y') ?> <span class="fw-bold text-primary">Monitoring
+                    Kotak P3K</span> | Team IT Pabrik</p>
         </div>
     </footer>
 </body>

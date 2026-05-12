@@ -296,7 +296,8 @@ $q_all_locations = mysqli_query($conn, "SELECT l.*,
                 <div class="text-center" style="min-width: 200px;">
                     <p class="small mb-5">Dibuat Oleh,</p>
                     <div class="mt-5">
-                        <p class="fw-bold mb-0 text-decoration-underline"><?= htmlspecialchars($_SESSION['username']) ?></p>
+                        <p class="fw-bold mb-0 text-decoration-underline"><?= htmlspecialchars($_SESSION['username']) ?>
+                        </p>
                         <p class="tiny text-secondary">Administrator</p>
                     </div>
                 </div>
@@ -309,8 +310,10 @@ $q_all_locations = mysqli_query($conn, "SELECT l.*,
                 </div>
             </div>
             <div class="mt-5 pt-3 border-top text-center print-only">
-                <p class="tiny text-secondary mb-0">Laporan ini dibuat secara otomatis melalui Sistem Monitoring Kotak P3K Digital</p>
-                <p class="tiny text-secondary">&copy; <?= date('Y') ?> PT CBA Chemical Industry | Dicetak pada: <?= date('d/m/Y H:i') ?> WIB</p>
+                <p class="tiny text-secondary mb-0">Laporan ini dibuat secara otomatis melalui Sistem Monitoring Kotak
+                    P3K Digital</p>
+                <p class="tiny text-secondary">&copy; <?= date('Y') ?> PT CBA Chemical Industry | Dicetak pada:
+                    <?= date('d/m/Y H:i') ?> WIB</p>
             </div>
         </div>
     </div>
@@ -348,7 +351,8 @@ $q_all_locations = mysqli_query($conn, "SELECT l.*,
     <script>lucide.createIcons(); <?php if (isset($success_msg)): ?> Swal.fire({ icon: 'success', title: 'Berhasil!', text: '<?= $success_msg ?>', timer: 2000, showConfirmButton: false, background: 'rgba(255, 255, 255, 0.95)', customClass: { popup: 'glass-card border-0 shadow-lg' } }); <?php endif; ?> <?php if (isset($error_msg)): ?> Swal.fire({ icon: 'error', title: 'Gagal!', text: '<?= $error_msg ?>', timer: 2000, showConfirmButton: false, background: 'rgba(255, 255, 255, 0.95)', customClass: { popup: 'glass-card border-0 shadow-lg' } }); <?php endif; ?> </script>
     <footer class="py-4 mt-5 border-top border-light text-center">
         <div class="container-fluid px-4">
-            <p class="text-secondary small mb-0">&copy; <?= date('Y') ?> <span class="fw-bold text-primary">PT CBA Chemical Industry</span> | Monitoring Kotak P3K - Team IT Pabrik</p>
+            <p class="text-secondary small mb-0">&copy; <?= date('Y') ?> <span class="fw-bold text-primary">Monitoring
+                    Kotak P3K</span> | Team IT Pabrik</p>
         </div>
     </footer>
 </body>

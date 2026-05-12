@@ -651,8 +651,7 @@ $locations = mysqli_query($conn, "SELECT l.*, u.nama as pic_nama,
     </script>
     <footer class="py-4 mt-5 border-top border-light">
         <div class="container-fluid px-4 text-center">
-            <p class="text-secondary small mb-0">&copy; <?= date('Y') ?> <span class="fw-bold text-primary">PT CBA
-                    Chemical Industry</span> | Monitoring Kotak P3K - Team IT Pabrik</p>
+            <p class="text-secondary small mb-0">&copy; <?= date('Y') ?> <span class="fw-bold text-primary">Monitoring Kotak P3K</span> | Team IT Pabrik</p>
         </div>
     </footer>
 </body>
